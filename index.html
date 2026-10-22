@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Reporte de Daños · TMAZ</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--bg:#f4f6f4;--card:#fff;--tx:#1a2420;--mut:#5d6b64;--g:#14692f;--gl:#e3f1e7;--bd:#d3dbd5;--red:#b3261e;--redl:#fbe9e7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121815;--card:#1b231f;--tx:#e8eee9;--mut:#9aa8a0;--g:#4cbb6b;--gl:#1f3626;--bd:#33413a;--red:#f2877f;--redl:#3a1f1c;color-scheme:dark}}
+*{box-sizing:inherit}
+html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:12px}
+header{background:var(--g);color:#fff;border-radius:12px;padding:14px 16px;margin-bottom:12px}
+header h1{font-size:18px;margin:0}
+header p{margin:2px 0 0;font-size:12px;opacity:.9}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px}
+h2{font-size:14px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut)}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.tile{border:2px solid var(--bd);background:var(--card);color:var(--tx);border-radius:12px;padding:14px 8px;font-size:17px;font-weight:600;cursor:pointer;text-align:center}
+.tile small{display:block;font-weight:400;font-size:11px;color:var(--mut);margin-top:2px}
+.tile.on{border-color:var(--g);background:var(--gl);color:var(--g)}
+.hdr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+input[type=text],input[type=date],select,textarea{font-family:inherit;width:100%;padding:11px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font-size:16px}
+label.f{font-size:12px;color:var(--mut);display:block;margin-bottom:2px}
+.grp{font-size:12px;font-weight:700;color:var(--g);margin:12px 0 6px;text-transform:uppercase}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:flex;align-items:center;gap:8px;border:2px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:10px;padding:10px 12px;font-size:15px;cursor:pointer;min-height:44px}
+.chip b{background:var(--gl);color:var(--g);border-radius:6px;padding:2px 7px;font-size:13px;min-width:30px;text-align:center}
+.chip.on{border-color:var(--g);background:var(--gl)}
+.chip.on b{background:var(--g);color:#fff}
+.chip.sd.on{border-color:var(--g)}
+.chip.dm.on{border-color:var(--red);background:var(--redl)}
+.chip.dm.on b{background:var(--red);color:#fff}
+.row{display:flex;gap:8px;margin-top:14px}
+.btn{flex:1;padding:13px;border-radius:10px;border:0;background:var(--g);color:#fff;font-size:16px;font-weight:600;cursor:pointer}
+.btn.s{background:var(--bg);color:var(--tx);border:1px solid var(--bd)}
+.btn:disabled{opacity:.45}
+.item{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--bd)}
+.item:first-child{border-top:0}
+.n{color:var(--mut);width:26px;font-size:13px}
+.id{font-weight:600;flex:1;word-break:break-all}
+.cds{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.cd{font-size:12px;font-weight:700;padding:2px 6px;border-radius:5px;background:var(--redl);color:var(--red)}
+.cd.ok{background:var(--gl);color:var(--g)}
+.x{border:0;background:none;color:var(--mut);font-size:20px;cursor:pointer;padding:4px 8px}
+.empty{color:var(--mut);font-size:14px;text-align:center;padding:8px}
+.msg{font-size:13px;color:var(--mut);margin-top:8px;min-height:18px}
+.leg{font-size:12px;color:var(--mut);margin-top:10px}
+.pbtn{display:inline-block;margin-top:12px;padding:11px 14px;border:2px dashed var(--g);border-radius:10px;color:var(--g);font-weight:600;cursor:pointer}
+.pth{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.th{position:relative}
+.th img,.thumbs img{width:72px;height:72px;object-fit:cover;border-radius:8px;border:1px solid var(--bd)}
+.thx{position:absolute;top:-6px;right:-6px;width:22px;height:22px;border-radius:50%;border:0;background:var(--red);color:#fff;cursor:pointer;line-height:1}
+.thumbs{display:flex;gap:6px;flex-wrap:wrap;padding:0 0 8px 36px}
+.pad{width:100%;height:130px;background:#fff;border:1px solid var(--bd);border-radius:8px;touch-action:none;display:block;margin:6px 0}
+.sg{margin-bottom:14px}
+#rep{position:fixed;left:-12000px;top:0}
+.pg{width:816px;height:1056px;background:#fff;color:#000;padding:28px 34px;font:11px Arial,Helvetica,sans-serif;position:relative;overflow:hidden}
+.pg table{border-collapse:collapse;width:100%}
+.pg td{border:1.5px solid #000;padding:2px 4px;text-align:center;font-size:10px}
+.pg .rg{background:#14692f;color:#fff;font-weight:700}
+.pg .rl{text-align:left}
+.pg .gy{background:#e6e6e6;font-weight:700}
+.logo{font:italic 900 30px Arial,sans-serif;color:#14692f}
+.ph{width:174px;height:128px;object-fit:contain;background:#eee;border:1px solid #999}
+.ft{position:absolute;left:34px;right:34px;bottom:26px;height:34px;background:#14692f;color:#fff;font-size:9px;padding:0 10px;display:flex;align-items:center}
+.sg2{flex:1;text-align:center;font-size:10px}
+.sgi{height:58px;display:flex;align-items:flex-end;justify-content:center}
+.sgl{border-top:1.5px solid #000;font-weight:700;margin:0 8px;padding-top:3px}
+@media print{header,.tiles,#form,.x,.row,.sigbtn,.thx{display:none}body{background:#fff}.thumbs img{width:110px;height:110px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Reporte de daños en mercancía</h1>
+  <p>TMAZ · Operaciones · Unifica R-04 Bobinas, R-06 Rollos y R-07 Vigas y placas</p>
+</header>
+
+<div class="card">
+  <h2>1 · ¿Qué mercancía inspeccionas?</h2>
+  <div class="tiles" id="tiles"></div>
+  <div class="leg" id="formref"></div>
+</div>
+
+<div class="card">
+  <h2>Datos del servicio</h2>
+  <div class="hdr">
+    <div><label class="f">N.º de servicio / folio</label><input type="text" id="h_serv"></div>
+    <div><label class="f">Inspector</label><input type="text" id="h_insp"></div>
+    <div><label class="f">Turno</label><select id="h_turno"><option value="">Selecciona…</option><option>Diurno</option><option>Mixto</option><option>Nocturno</option></select></div>
+    <div><label class="f">Ubicación de operación</label><input type="text" id="h_ubi"></div>
+    <div><label class="f">Fecha</label><input type="date" id="h_fecha"></div>
+  </div>
+</div>
+
+<div class="card" id="form" hidden>
+  <h2>2 · Marca los daños <span id="ptitle"></span></h2>
+  <label class="f">Número de identificación</label>
+  <input type="text" id="idn" placeholder="Ej. 12345-A" autocomplete="off">
+  <div id="chipsBox"></div>
+  <div class="grp">Fotos del daño <span id="pcount" style="color:var(--mut);text-transform:none"></span></div>
+  <label class="pbtn" for="pfile">📷 Agregar fotos</label>
+  <input type="file" id="pfile" accept="image/*" multiple hidden>
+  <div class="pth" id="pthumbs"></div>
+  <div class="row">
+    <button class="btn s" id="clr">Limpiar</button>
+    <button class="btn" id="add">Agregar al reporte</button>
+  </div>
+  <div class="msg" id="msg"></div>
+</div>
+
+<div class="card">
+  <h2>Registro (<span id="cnt">0</span>/25)</h2>
+  <div id="list"><div class="empty">Aún no hay registros.</div></div>
+  <div class="row">
+    <button class="btn s" id="copy">Copiar resumen</button>
+    <button class="btn s" id="print">Imprimir</button>
+    <button class="btn s" id="reset">Borrar todo</button>
+  </div>
+  <div class="row" id="exp" style="flex-wrap:wrap"></div>
+  <div class="msg" id="msg2">Recuerda: si hay daño, regístralo en SIAN y llena el reporte.</div>
+</div>
+
+<div id="rep"></div>
+<div class="card" id="sigs">
+  <h2>Observaciones generales</h2>
+  <textarea id="obs" rows="3"></textarea>
+  <h2 style="margin-top:16px">Firmas</h2>
+  <div class="sg"><label class="f">Nombre del supervisor</label><input type="text" id="n1"><canvas id="s1" class="pad"></canvas><button class="btn s sigbtn" id="s1c">Borrar firma</button></div>
+  <div class="sg"><label class="f">Nombre de la parte interesada</label><input type="text" id="n2"><canvas id="s2" class="pad"></canvas><button class="btn s sigbtn" id="s2c">Borrar firma</button></div>
+</div>
+</div>
+
+<script>
+var CFG={
+ placas:{n:"Placas",f:"TMAZ-SIG-OPE-R-07 · Reporte de daños en vigas y placas",
+  g:[["Placa / viga",[["G","Golpe"],["R","Rayadura"],["D","Doblez / pandeo"],["P","Perforación"],["DE","Deformación"],["O","Oxidación"]]],["Tarima",[["B","Borde dañado"],["E","Esquina dañada"]]]]},
+ vigas:{n:"Vigas",f:"TMAZ-SIG-OPE-R-07 · Reporte de daños en vigas y placas",
+  g:[["Placa / viga",[["G","Golpe"],["R","Rayadura"],["D","Doblez / pandeo"],["P","Perforación"],["DE","Deformación"],["O","Oxidación"]]],["Tarima",[["B","Borde dañado"],["E","Esquina dañada"]]]]},
+ rollos:{n:"Rollos",f:"TMAZ-SIG-OPE-R-06 · Reporte de daños en rollos (colocados verticalmente)",
+  g:[["Rollo",[["G","Golpe"],["A","Abolladura"],["P","Piquete / perforación"],["CD","Centro deformado"],["FR","Flejes rotos"],["FD","Forro dañado"]]],["Tarima",[["TQ","Tarima quebrada"],["TG","Tarima agrietada"]]]]},
+ bobinas:{n:"Bobinas",f:"TMAZ-SIG-OPE-R-04 · Reporte de daños en bobinas",
+  g:[["Bobina",[["G","Golpe"],["A","Abolladura"],["P","Piquete"],["C","Centro deforme"],["FR","Flejes rotos"],["FC","Forro corrugado"]]]]}
+};
+var sub={placas:"Formato R-07",vigas:"Formato R-07",rollos:"Formato R-06",bobinas:"Formato R-04"};
+var cur=null,sel=[],rows={placas:[],vigas:[],rollos:[],bobinas:[]};
+function $(i){return document.getElementById(i)}
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!=null)e.textContent=h;return e}
+
+function tiles(){var b=$("tiles");b.innerHTML="";
+ Object.keys(CFG).forEach(function(k){var t=el("button","tile"+(k===cur?" on":""),CFG[k].n);
+  t.appendChild(el("small","",sub[k]+(rows[k].length?" · "+rows[k].length+" reg.":"")));
+  t.onclick=function(){cur=k;sel=[];photos=[];rph();$("idn").value="";$("msg").textContent="";tiles();chips();list()};b.appendChild(t)})}
+
+function chips(){var f=$("form");if(!cur){f.hidden=true;return}f.hidden=false;
+ $("ptitle").textContent="· "+CFG[cur].n;$("formref").textContent=CFG[cur].f;
+ var b=$("chipsBox");b.innerHTML="";
+ var g0=el("div","grp","Sin daños");b.appendChild(g0);
+ var c0=el("div","chips");c0.appendChild(mk("SD","Sin daños",true));b.appendChild(c0);
+ CFG[cur].g.forEach(function(g){b.appendChild(el("div","grp","Daños en "+g[0].toLowerCase()));
+  var c=el("div","chips");g[1].forEach(function(x){c.appendChild(mk(x[0],x[1],false))});b.appendChild(c)})}
+
+function mk(code,name,isSD){var c=el("button","chip "+(isSD?"sd":"dm")+(sel.indexOf(code)>-1?" on":""));
+ c.appendChild(el("b","",code));c.appendChild(el("span","",name));
+ c.onclick=function(){
+  if(isSD){sel=sel.indexOf("SD")>-1?[]:["SD"]}
+  else{sel=sel.filter(function(s){return s!=="SD"});var i=sel.indexOf(code);i>-1?sel.splice(i,1):sel.push(code)}
+  chips()};return c}
+
+$("add").onclick=function(){
+ var id=$("idn").value.trim(),m=$("msg");
+ if(!id){m.textContent="Escribe el número de identificación.";return}
+ if(!sel.length){m.textContent="Marca al menos un daño o SD.";return}
+ if(rows[cur].length>=25){m.textContent="Máximo 25 por hoja. Imprime o copia y comienza otra.";return}
+ rows[cur].push({id:id,c:sel.slice(),p:photos.slice()});photos=[];rph();
+ var d=sel.indexOf("SD")<0;sel=[];$("idn").value="";
+ m.textContent=d?"Agregado con daño. Recuerda registrarlo en SIAN.":"Agregado sin daños.";
+ tiles();chips();list();$("idn").focus()};
+$("clr").onclick=function(){sel=[];photos=[];rph();$("idn").value="";$("msg").textContent="";chips()};
+
+function list(){var b=$("list");b.innerHTML="";
+ var any=false,tot=0;
+ Object.keys(rows).forEach(function(k){if(!rows[k].length)return;any=true;tot+=rows[k].length;
+  b.appendChild(el("div","grp",CFG[k].n));
+  rows[k].forEach(function(r,i){var it=el("div","item");it.appendChild(el("div","n",i+1));it.appendChild(el("div","id",r.id));
+   var cs=el("div","cds");r.c.forEach(function(c){cs.appendChild(el("span","cd"+(c==="SD"?" ok":""),c))});it.appendChild(cs);
+   var x=el("button","x","×");x.setAttribute("aria-label","Quitar");x.onclick=function(){rows[k].splice(i,1);tiles();list()};it.appendChild(x);b.appendChild(it);if(r.p&&r.p.length){var ph=el("div","thumbs");r.p.forEach(function(s){var im=el("img");im.src=s;ph.appendChild(im)});b.appendChild(ph)}})});
+ if(!any)b.appendChild(el("div","empty","Aún no hay registros."));
+ $("cnt").textContent=tot;rexp()}
+
+function summary(){var o="REPORTE DE DAÑOS · TMAZ\n";
+ o+="Servicio: "+$("h_serv").value+" | Inspector: "+$("h_insp").value+" | Turno: "+$("h_turno").value+" | Ubicación: "+$("h_ubi").value+"\n";
+ Object.keys(rows).forEach(function(k){if(!rows[k].length)return;o+="\n"+CFG[k].n.toUpperCase()+" ("+CFG[k].f.split(" · ")[0]+")\n";
+  rows[k].forEach(function(r,i){o+=(i+1)+". "+r.id+" → "+r.c.join(", ")+(r.p&&r.p.length?" ["+r.p.length+" foto(s)]":"")+"\n"})});o+="\nSupervisor: "+$("n1").value+" | Parte interesada: "+$("n2").value+"\n";return o}
+$("copy").onclick=function(){var t=summary(),m=$("msg2");
+ try{navigator.clipboard.writeText(t).then(function(){m.textContent="Resumen copiado."},function(){m.textContent="No se pudo copiar."})}catch(e){m.textContent="No se pudo copiar."}};
+$("print").onclick=function(){window.print()};
+$("reset").onclick=function(){if(confirm("¿Borrar todos los registros?")){rows={placas:[],vigas:[],rollos:[],bobinas:[]};$("s1").clear();$("s2").clear();$("n1").value="";$("n2").value="";tiles();list()}};
+var photos=[];
+function rph(){var b=$("pthumbs");b.innerHTML="";photos.forEach(function(s,i){var w=el("div","th");var im=el("img");im.src=s;var x=el("button","thx","×");x.onclick=function(){photos.splice(i,1);rph()};w.appendChild(im);w.appendChild(x);b.appendChild(w)});$("pcount").textContent=photos.length?"· "+photos.length+"/6":""}
+function shrink(f,cb){var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,900/Math.max(im.width,im.height));var c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);cb(c.toDataURL("image/jpeg",.7))};im.src=r.result};r.readAsDataURL(f)}
+$("pfile").onchange=function(e){Array.prototype.forEach.call(e.target.files,function(f){shrink(f,function(d){if(photos.length<6){photos.push(d);rph()}})});e.target.value=""};
+function pad(cv){var ctx=cv.getContext("2d"),d=false;var r0=cv.getBoundingClientRect();cv.width=r0.width;cv.height=r0.height;
+ function pos(e){var r=cv.getBoundingClientRect();return[e.clientX-r.left,e.clientY-r.top]}
+ cv.addEventListener("pointerdown",function(e){d=true;cv.has=true;cv.setPointerCapture(e.pointerId);var p=pos(e);ctx.beginPath();ctx.moveTo(p[0],p[1]);ctx.lineTo(p[0]+.1,p[1]+.1);ctx.lineWidth=2.2;ctx.lineCap="round";ctx.strokeStyle="#000";ctx.stroke();e.preventDefault()});
+ cv.addEventListener("pointermove",function(e){if(!d)return;var p=pos(e);ctx.lineTo(p[0],p[1]);ctx.stroke()});
+ ["pointerup","pointercancel"].forEach(function(n){cv.addEventListener(n,function(){d=false})});
+ cv.clear=function(){ctx.clearRect(0,0,cv.width,cv.height);cv.has=false}}
+pad($("s1"));pad($("s2"));
+$("s1c").onclick=function(){$("s1").clear()};$("s2c").onclick=function(){$("s2").clear()};
+var INFO={
+ placas:['TMAZ-SIG-OPE-R-07','REPORTE DE DAÑOS EN VIGAS Y PLACAS','11 / 09 / 2026','Inspeccione visualmente cada viga o placa antes de su despacho. Marque con una X todos los daños detectados; si no presenta daños, marque SD. Cuando exista daño, regístrelo en SIAN y llene el presente Reporte de daños.'],
+ rollos:['TMAZ-SIG-OPE-R-06','REPORTE DE DAÑOS EN ROLLOS','07 / 09 / 2026','Inspeccione visualmente cada rollo colocado verticalmente y su tarima. Marque con una X todos los daños detectados; si no presenta daños, marque SD. Cuando exista daño, regístrelo en SIAN y llene la presente Tarja de daños.'],
+ bobinas:['TMAZ-SIG-OPE-R-04','REPORTE DE DAÑOS EN BOBINAS','27 / 08 / 2026','Marca con una X en la tabla de abajo, el daño identificado acorde a la codificación y ejemplos presentados. En caso de no presentar daños, marca SD.']};
+INFO.vigas=INFO.placas;
+function E(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function fdate(v){if(!v)return '___ / ___ / ______';var p=v.split('-');return p[2]+' / '+p[1]+' / '+p[0]}
+function nm(k,c){var r=c;CFG[k].g.forEach(function(g){g[1].forEach(function(x){if(x[0]===c)r=x[1]})});return r}
+function footer(){return `<div class='ft'><b class='logo' style='font-size:20px;color:#fff;margin-right:14px'>tmaz</b>Copia no controlada si se imprime o descarga. Consulte la versión vigente en el repositorio oficial del SIG de TMAZ.</div>`}
+function sg(label,name,img){return `<div class='sg2'><div class='sgi'>${img?`<img src='${img}' style='max-height:54px;max-width:90%'>`:''}</div><div class='sgl'>${label}</div><div>${E(name)}</div></div>`}
+function buildReport(k){
+ var I=INFO[k],cfg=CFG[k],R=rows[k],codes=[];
+ cfg.g.forEach(function(g){g[1].forEach(function(x){codes.push(x[0])})});
+ var leg='SD Sin daños | '+codes.map(function(c){return c+' '+nm(k,c)}).join(' | ');
+ var top=`<table><tr><td class='rl' rowspan='4' style='width:150px'><span class='logo'>tmaz</span><br><span style='font-size:7px;color:#14692f'>Terminal Marítima Mazatlán</span></td><td class='rl'><b>Tipo de documento:</b> Registro</td><td class='rl'><b>Área: OPERACIONES</b></td></tr><tr><td class='rl'><b>Título:</b></td><td>Fecha: ${I[2]}</td></tr><tr><td style='font-size:13px'><b>${I[1]}</b></td><td rowspan='2' style='font-size:12px'>Versión: 00</td></tr><tr><td><b>${I[0]}</b></td></tr></table>`;
+ var svc=`<table style='margin-top:8px'><tr><td class='gy rl' style='width:19%'>N.º de servicio:</td><td class='rl'>${E($('h_serv').value)}</td><td class='gy'>Fecha:</td><td>${fdate($('h_fecha').value)}</td><td class='gy'>Turno:</td><td>${E($('h_turno').value)}</td></tr><tr><td class='gy rl'>Nombre de inspector:</td><td class='rl' colspan='3'>${E($('h_insp').value)}</td><td class='gy'>Ubicación de operación:</td><td>${E($('h_ubi').value)}</td></tr><tr><td class='gy rl'>Material:</td><td class='rl' colspan='5'><b>${cfg.n}</b></td></tr></table>`;
+ var ins=`<div class='rg' style='text-align:center;padding:3px;font-weight:700;margin-top:8px;font-size:11px'>INSTRUCCIONES</div><div style='border:1.5px solid #000;padding:4px 6px;font-size:10px;text-align:center'>${I[3]}<br><b>${leg}</b></div>`;
+ var gh=cfg.g.map(function(g){return `<td class='rg' colspan='${g[1].length}'>${E(g[0]).toUpperCase()}</td>`}).join('');
+ var t=`<table style='margin-top:8px'><tr><td class='rg' colspan='2'>IDENTIFICACIÓN</td><td class='rg'>SD</td>${gh}<td class='rg' rowspan='2' style='width:42px'>FOTOS</td></tr><tr><td class='rg' style='width:26px'>#</td><td class='rg'>Número de identificación</td><td class='rg' style='width:32px'>SD</td>${codes.map(function(c){return `<td class='rg' style='width:32px'>${c}</td>`}).join('')}</tr>`;
+ for(var i=0;i<25;i++){var r=R[i];t+=`<tr style='height:19px'><td>${i+1}</td><td class='rl'>${r?E(r.id):''}</td><td>${r&&r.c.indexOf('SD')>-1?'X':''}</td>${codes.map(function(c){return `<td>${r&&r.c.indexOf(c)>-1?'X':''}</td>`}).join('')}<td>${r&&r.p.length?r.p.length:''}</td></tr>`}
+ t+='</table>';
+ var obs=`<div class='gy' style='border:1.5px solid #000;padding:3px 4px;font-weight:700;margin-top:10px'>Observaciones generales:</div><div style='border:1.5px solid #000;border-top:0;min-height:50px;padding:4px;font-size:10px;white-space:pre-wrap'>${E($('obs').value)}</div>`;
+ var s1=$('s1'),s2=$('s2');
+ var sigs=(k==='bobinas'?'':sg('Firma y nombre del inspector de mercancía',$('h_insp').value,''))+sg('Firma y nombre del supervisor',$('n1').value,s1.has?s1.toDataURL('image/png'):'')+sg('Firma de la parte interesada',$('n2').value,s2.has?s2.toDataURL('image/png'):'');
+ var p1=`<div class='pg'>${top}${svc}${ins}${t}${obs}<div style='display:flex;gap:6px;margin-top:20px'>${sigs}</div>${footer()}</div>`;
+ var items=[];R.forEach(function(r,i){if(r.p&&r.p.length)items.push([i,r])});
+ var pages=[],cp=[],h=0;
+ items.forEach(function(it){var bh=60+Math.ceil(it[1].p.length/4)*134;if(h+bh>860&&cp.length){pages.push(cp);cp=[];h=0}cp.push(it);h+=bh});
+ if(cp.length)pages.push(cp);
+ var ann=pages.map(function(pg,n){return `<div class='pg'><div class='rg' style='padding:6px 8px;font-size:12px;font-weight:700'>ANEXO FOTOGRÁFICO · ${I[0]} · ${cfg.n.toUpperCase()} · Servicio: ${E($('h_serv').value)} · Pág. ${n+1}/${pages.length}</div>`+pg.map(function(it){var r=it[1];return `<div style='border:1.5px solid #000;margin-top:8px;padding:6px'><b>#${it[0]+1} · ${E(r.id)}</b> — ${r.c.map(function(c){return c==='SD'?'Sin daños':nm(k,c)}).join(', ')}<div style='display:flex;flex-wrap:wrap;gap:6px;margin-top:6px'>${r.p.map(function(s){return `<img class='ph' src='${s}'>`}).join('')}</div></div>`}).join('')+footer()+`</div>`}).join('');
+ return p1+ann}
+function rexp(){var b=$('exp');b.innerHTML='';Object.keys(rows).forEach(function(k){if(!rows[k].length)return;var x=el('button','btn','⬇ Exportar PDF · '+CFG[k].n);x.style.minWidth='46%';x.onclick=function(){exportPdf(k)};b.appendChild(x)})}
+async function exportPdf(k){
+ var m=$('msg2');
+ if(!window.html2canvas||!window.jspdf){m.textContent='No cargó la librería de PDF. Revisa tu conexión.';return}
+ m.textContent='Generando PDF…';
+ var host=$('rep');host.innerHTML=buildReport(k);
+ try{
+  var pdf=new jspdf.jsPDF({unit:'pt',format:'letter'});
+  var pgs=host.querySelectorAll('.pg');
+  for(var i=0;i<pgs.length;i++){var c=await html2canvas(pgs[i],{scale:2,backgroundColor:'#ffffff'});if(i)pdf.addPage();pdf.addImage(c.toDataURL('image/jpeg',.85),'JPEG',0,0,612,792)}
+  var dl=(window.claude&&claude.use)?await claude.use('downloads'):null;
+  var f=$('h_fecha').value||'sin-fecha';
+  if(dl){await dl.save({filename:INFO[k][0]+'_'+CFG[k].n+'_'+f+'.pdf',data:pdf.output('blob')});m.textContent='Reporte listo.'}
+  else{m.textContent='La descarga no está disponible en esta vista. Abre el artifact en claude.ai.'}
+ }catch(e){m.textContent=(e&&e.code==='declined')?'Descarga cancelada.':'No se pudo generar el PDF.'}
+ host.innerHTML=''}
+(function(){var d=new Date(),z=function(n){return ('0'+n).slice(-2)};$('h_fecha').value=d.getFullYear()+'-'+z(d.getMonth()+1)+'-'+z(d.getDate())})();
+tiles();list();
+</script>
+</body>
+</html>
